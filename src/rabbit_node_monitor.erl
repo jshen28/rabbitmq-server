@@ -697,7 +697,7 @@ await_cluster_recovery(Condition) ->
     run_outside_applications(fun () ->
                                      rabbit:stop(),
                                      wait_for_cluster_recovery(Condition)
-                             end, false),
+                             end, true),
     ok.
 
 run_outside_applications(Fun, WaitForExistingProcess) ->
