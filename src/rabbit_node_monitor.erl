@@ -695,7 +695,7 @@ await_cluster_recovery(Condition) ->
     run_outside_applications(fun () ->
                                      rabbit:stop(),
                                      wait_for_cluster_recovery(Condition)
-                             end, false),
+                             end, true),
     ok.
 
 run_outside_applications(Fun, WaitForExistingProcess) ->
@@ -726,6 +726,8 @@ register_outside_app_process(Fun, WaitForExistingProcess) ->
             do_run_outside_app_fun(Fun)
     catch
         error:badarg when WaitForExistingProcess ->
+            rabbit_log:warning("A outside app is already running, 
+            waiting for it completes~n", []),
             MRef = erlang:monitor(process, rabbit_outside_app_process),
             receive
                 {'DOWN', MRef, _, _, _} ->
